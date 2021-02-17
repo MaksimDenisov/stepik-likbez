@@ -1,1 +1,1 @@
-# stepik-likbez
+# https://stepik.org/course/91/info
