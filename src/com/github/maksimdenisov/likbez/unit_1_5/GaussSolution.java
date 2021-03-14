@@ -3,19 +3,12 @@ package com.github.maksimdenisov.likbez.unit_1_5;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+/**
+ * https://prog-cpp.ru/gauss/
+ */
 public class GaussSolution {
     //[row][column]
     private final double[][] matrix;
-
-    /****************************************************/
-    public static void main(String[] args) throws Exception {
-        InputStream stream = new ByteArrayInputStream(TestData.Test_2.getBytes());
-        GaussSolution solution = new GaussSolution(Util.scanMatrix(stream));
-        for (double v : solution.getSolve()) {
-            System.out.printf("%f16 ", v);
-        }
-    }
-
     /****************************************************/
 
     public GaussSolution(double[][] matrix) {
@@ -31,7 +24,7 @@ public class GaussSolution {
         return matrix;
     }
 
-    public double[] getSolve() throws IllegalArgumentException {
+    public double[] getSolution() throws IllegalArgumentException {
         double[] solve = new double[matrix.length];
         for (int i = 0; i < matrix.length; i++) {
             solve[i] = matrix[i][matrix[0].length - 1] / matrix[i][i];
@@ -39,8 +32,8 @@ public class GaussSolution {
         return solve;
     }
 
-    public Integer getSolvesQuantity() {
-        return Integer.MAX_VALUE;
+    public String hasSolution(){
+        return "YES";
     }
 
     private void doStraightRun() {
