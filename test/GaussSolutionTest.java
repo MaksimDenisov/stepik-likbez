@@ -241,6 +241,7 @@ class GaussSolutionTest {
      */
     private void assertSolution(GaussSolution gaussSolution, String expectedHasSolution) {
         assertNotNull(gaussSolution);
+        System.out.println(gaussSolution.getDebugRank());
         assertEquals(expectedHasSolution, gaussSolution.hasSolution());
     }
 

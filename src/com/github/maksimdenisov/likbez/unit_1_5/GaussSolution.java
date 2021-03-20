@@ -1,14 +1,14 @@
 package com.github.maksimdenisov.likbez.unit_1_5;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
 /**
  * https://prog-cpp.ru/gauss/
  */
 public class GaussSolution {
+    private static final double EPSILON = 0.00001;
     //[row][column]
     private final double[][] matrix;
+    private String hasSolution = "";
+
     /****************************************************/
 
     public GaussSolution(double[][] matrix) {
@@ -17,7 +17,22 @@ public class GaussSolution {
         //TODO Prepare Matrix Sort перемещать столбцы с 0 влево
         printMatrix();
         doStraightRun();
-        doReverseRun();
+        System.out.printf("Rank = %d, Extended rank = %d\n", getRank(), getRankExtended());
+        if (getRank() < getRankExtended()) {
+            hasSolution = "NO";
+        } else {
+            if (getRank() == getRankExtended()) {
+                if (getRank() < matrix[0].length - 1) {
+                    hasSolution = "INF";
+
+                } else {
+                    doReverseRun();
+                    hasSolution = "YES";
+                }
+            } else {
+                hasSolution = "INF";
+            }
+        }
     }
 
     public double[][] getMatrix() {
@@ -25,15 +40,15 @@ public class GaussSolution {
     }
 
     public double[] getSolution() throws IllegalArgumentException {
-        double[] solve = new double[matrix.length];
-        for (int i = 0; i < matrix.length; i++) {
+        double[] solve = new double[matrix[0].length - 1];
+        for (int i = 0; i < solve.length; i++) {
             solve[i] = matrix[i][matrix[0].length - 1] / matrix[i][i];
         }
         return solve;
     }
 
-    public String hasSolution(){
-        return "YES";
+    public String hasSolution() {
+        return hasSolution;
     }
 
     private void doStraightRun() {
@@ -43,6 +58,8 @@ public class GaussSolution {
                 if (matrix[step][step] == 0) {
                     swapRows(step, i);
                 } else {
+                    if (matrix[i][step] == 0)
+                        break;
                     multiplyRow(i, (matrix[step][step] / matrix[i][step]));
                     subtractRow(i, step);
                 }
@@ -53,22 +70,14 @@ public class GaussSolution {
 
     private void doReverseRun() {
         System.out.println("doReverseRun");
-        for (int step = matrix.length - 1; step > 0; step--) {
+        for (int step = matrix[0].length - 2; step > 0; step--) {
             for (int i = step - 1; i >= 0; i--) {
+                if (matrix[i][step] == 0)
+                    continue;
                 multiplyRow(i, (matrix[step][step] / matrix[i][step]));
                 subtractRow(i, step);
             }
             printMatrix();
-        }
-    }
-
-    private void swapColumns(int aColIndex, int bColIndex) {
-        checkColumnIndex(aColIndex);
-        checkColumnIndex(bColIndex);
-        for (int i = 0; i < matrix.length; i++) {
-            double swap = matrix[i][aColIndex];
-            matrix[i][aColIndex] = matrix[i][bColIndex];
-            matrix[i][bColIndex] = swap;
         }
     }
 
@@ -103,14 +112,36 @@ public class GaussSolution {
         }
     }
 
-    private int rank() {
-        return 0;
+    private int getRank() {
+        int rank = 0;
+        for (double[] doubles : matrix) {
+            for (int i = 0; i < doubles.length-1; i++) {
+                if(!equalsZero(doubles[i])) {
+                    rank++;
+                    break;
+                }
+            }
+        }
+        return rank;
     }
 
-    private void check(int row, int column) {
-        checkRowIndex(row);
-        checkColumnIndex(column);
+    private int getRankExtended() {
+        int rank = 0;
+        for (double[] doubles : matrix) {
+            for (int i = 0; i < doubles.length; i++) {
+                if(!equalsZero(doubles[i])) {
+                    rank++;
+                    break;
+                }
+            }
+        }
+        return rank;
     }
+
+    private boolean equalsZero(double val) {
+        return (Math.abs(val) < EPSILON);
+    }
+
 
     private void checkRowIndex(int row) {
         if (row < 0 || row > matrix.length - 1) {
@@ -118,13 +149,11 @@ public class GaussSolution {
         }
     }
 
-    private void checkColumnIndex(int column) {
-        if (column < 0 || column > matrix[0].length - 2) {
-            throw new IllegalArgumentException("Column index must be lower than " + (matrix[0].length - 2) + ", but  equals " + column);
-        }
-    }
-
     private void printMatrix() {
         Util.printMatrix(getMatrix());
+    }
+
+    public int getDebugRank() {
+        return getRankExtended();
     }
 }
