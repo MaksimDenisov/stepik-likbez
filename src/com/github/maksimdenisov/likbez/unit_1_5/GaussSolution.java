@@ -3,8 +3,10 @@ package com.github.maksimdenisov.likbez.unit_1_5;
 /**
  * https://prog-cpp.ru/gauss/
  */
+
+
 public class GaussSolution {
-    private static final double EPSILON = 0.00001;
+    private static final double EPSILON = 0.0000001;
     //[row][column]
     private final double[][] matrix;
     private String hasSolution = "";
@@ -14,23 +16,18 @@ public class GaussSolution {
     public GaussSolution(double[][] matrix) {
         this.matrix = matrix;
         System.out.println("Incoming data");
-        //TODO Prepare Matrix Sort перемещать столбцы с 0 влево
         printMatrix();
         doStraightRun();
         System.out.printf("Rank = %d, Extended rank = %d\n", getRank(), getRankExtended());
-        if (getRank() < getRankExtended()) {
+        if (getRank() != getRankExtended()) {
             hasSolution = "NO";
         } else {
-            if (getRank() == getRankExtended()) {
-                if (getRank() < matrix[0].length - 1) {
-                    hasSolution = "INF";
-
-                } else {
-                    doReverseRun();
-                    hasSolution = "YES";
-                }
-            } else {
+            if (getRank() < matrix[0].length - 1) {
                 hasSolution = "INF";
+            }
+            else{
+                doReverseRun();
+                hasSolution = "YES";
             }
         }
     }
@@ -53,18 +50,23 @@ public class GaussSolution {
 
     private void doStraightRun() {
         System.out.println("doStraightRun");
-        for (int step = 0; step < matrix.length - 1; step++) {
-            for (int i = step + 1; i < matrix.length; i++) {
-                if (matrix[step][step] == 0) {
-                    swapRows(step, i);
-                } else {
-                    if (matrix[i][step] == 0)
-                        break;
-                    multiplyRow(i, (matrix[step][step] / matrix[i][step]));
-                    subtractRow(i, step);
+        try {
+            for (int step = 0; step < matrix.length - 1; step++) {
+                for (int i = step + 1; i < matrix.length; i++) {
+                   if (matrix[step][step] == 0) {
+                        swapRows(step, i);
+                    } else {
+                        if (matrix[i][step] == 0)
+                            break;
+                        multiplyRow(i, (matrix[step][step] / matrix[i][step]));
+                        subtractRow(i, step);
+                    }
                 }
+                printMatrix();
             }
-            printMatrix();
+        }
+        catch(ArrayIndexOutOfBoundsException e)    {
+
         }
     }
 
@@ -115,8 +117,8 @@ public class GaussSolution {
     private int getRank() {
         int rank = 0;
         for (double[] doubles : matrix) {
-            for (int i = 0; i < doubles.length-1; i++) {
-                if(!equalsZero(doubles[i])) {
+            for (int i = 0; i < doubles.length - 1; i++) {
+                if (!equalsZero(doubles[i])) {
                     rank++;
                     break;
                 }
@@ -129,7 +131,7 @@ public class GaussSolution {
         int rank = 0;
         for (double[] doubles : matrix) {
             for (int i = 0; i < doubles.length; i++) {
-                if(!equalsZero(doubles[i])) {
+                if (!equalsZero(doubles[i])) {
                     rank++;
                     break;
                 }
